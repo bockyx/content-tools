@@ -1,6 +1,6 @@
-# YouTube Tools
+# Content Tools
 
-A collection of scripts to simplify my YouTube content creation workflow.
+A collection of scripts to simplify my content creation workflow.
 
 ## Scripts
 
