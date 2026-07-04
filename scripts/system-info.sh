@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# Valores por defecto
+# Default values
 recording="Unknown"
 editing="Unknown"
 
-# Parsear opciones con getopt
+# Parse options with getopt
 OPTS=$(getopt -o r:e:h --long recording:,editing:,help -n "$0" -- "$@")
 if [ $? != 0 ]; then
     echo "Error parsing options" >&2
@@ -58,7 +58,7 @@ vram=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/
 
 vram="${vram:-Unknown}GB"
 
-# Acumular almacenamiento por tipo
+# Accumulate storage by type
 declare -A storage_by_type
 
 while read -r name size rota; do
@@ -70,15 +70,15 @@ while read -r name size rota; do
         type="HDD"
     fi
 
-    # Acumular tamaño por tipo
+    # Accumulate size by type
     storage_by_type[$type]=$(( ${storage_by_type[$type]:-0} + size ))
 done < <(lsblk -bdno NAME,SIZE,ROTA)
 
-# Construir salida con valores en GB (decimal)
+# Build output with GB values (decimal)
 storage=$'\n'
 for type in "NVMe SSD" "SATA SSD" "HDD"; do
     if [[ -n "${storage_by_type[$type]}" ]]; then
-        # Convertir a GB (decimal, no binario)
+        # Convert to GB (decimal, not binary)
         gb=$(( storage_by_type[$type] / 1000000000 ))
         tb=$(( gb / 1000 ))
         if [[ $tb -gt 0 ]]; then
