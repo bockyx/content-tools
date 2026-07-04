@@ -1,7 +1,46 @@
 #!/usr/bin/env bash
 
-recording="${1:-Unknown}"
-editing="${2:-Unknown}"
+# Valores por defecto
+recording="Unknown"
+editing="Unknown"
+
+# Parsear opciones con getopt
+OPTS=$(getopt -o r:e:h --long recording:,editing:,help -n "$0" -- "$@")
+if [ $? != 0 ]; then
+    echo "Error parsing options" >&2
+    exit 1
+fi
+
+eval set -- "$OPTS"
+
+while true; do
+    case "$1" in
+        -r|--recording)
+            recording="$2"
+            shift 2
+            ;;
+        -e|--editing)
+            editing="$2"
+            shift 2
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Options:"
+            echo "  -r, --recording SOFTWARE   Recording software used"
+            echo "  -e, --editing SOFTWARE     Editing software used"
+            echo "  -h, --help                 Show this help message"
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Internal error!" >&2
+            exit 1
+            ;;
+    esac
+done
 
 fastfetch=$(fastfetch --format json --structure CPU:GPU:Memory:OS:Kernel:DE:Disk)
 
